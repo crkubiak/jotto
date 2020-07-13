@@ -4,6 +4,7 @@ import './App.css'
 import Congrats from './Congrats'
 import GuessedWords from './GuessedWords'
 import hookActions from './actions/hookActions'
+import Input from './Input'
 
 /**
  * Reducer to update state, called automatically by dispatch
@@ -31,13 +32,25 @@ function App() {
   React.useEffect(() => {
     hookActions.getSecretWord(setSecretWord)
   }, [])
+
+  if (!state.secretWord) {
+    return (
+      <div className="container" data-test="spinner">
+        <div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>
+        <p>Loading secret word</p>
+      </div>
+    )
+  }
   return (
     <div data-test="component-app" className="container">
-      <h1>Jotto</h1>
+      <Input secretWord={state.secretWord} />
+      {/* <h1>Jotto</h1>
       <Congrats success={true} />
       <GuessedWords
         guessedWords={[{ guessedWord: 'train', letterMatchCount: 3 }]}
-      />
+      /> */}
     </div>
   )
 }
