@@ -1,22 +1,45 @@
 import React, { Component } from 'react'
-
 import './App.css'
 
 import Congrats from './Congrats'
 import GuessedWords from './GuessedWords'
+import hookActions from './actions/hookActions'
 
-class App extends Component {
-  render() {
-    return (
-      <div data-test="component-app" className="container">
-        <h1>Jotto</h1>
-        <Congrats success={true} />
-        <GuessedWords
-          guessedWords={[{ guessedWord: 'train', letterMatchCount: 3 }]}
-        />
-      </div>
-    )
+/**
+ * Reducer to update state, called automatically by dispatch
+ * @param {object} state - existing state
+ * @param {object} action - contains 'type' and 'payload properties for the state update
+ *                          example: { type: "setSecretWord", payload: "party" }
+ * @return {object} - new state
+ */
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'setSecretWord':
+      return { ...state, secretWord: action.payload }
+    default:
+      throw new Error(`Invalid action type: ${action.type}`)
   }
+}
+
+function App() {
+  const [state, dispatch] = React.useReducer(reducer, { secretWord: null })
+
+  const setSecretWord = secretWord =>
+    dispatch({ type: 'setSecretWord', payload: secretWord })
+
+  React.useEffect(() => {
+    hookActions.getSecretWord(setSecretWord)
+  }, [])
+  return (
+    <div data-test="component-app" className="container">
+      <h1>Jotto</h1>
+      <Congrats success={true} />
+      <GuessedWords
+        guessedWords={[{ guessedWord: 'train', letterMatchCount: 3 }]}
+      />
+    </div>
+  )
 }
 
 export default App
